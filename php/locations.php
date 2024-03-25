@@ -3,13 +3,12 @@ require_once "db_connect.php";
 
 session_start();
 
-if(isset($_POST['code'], $_POST['name'])){
-    $username = filter_input(INPUT_POST, 'code', FILTER_SANITIZE_STRING);
-	$name = filter_input(INPUT_POST, 'name', FILTER_SANITIZE_STRING);
+if(isset($_POST['code'])){
+    $product = filter_input(INPUT_POST, 'code', FILTER_SANITIZE_STRING);
 
     if($_POST['id'] != null && $_POST['id'] != ''){
-        if ($update_stmt = $db->prepare("UPDATE users SET username=?, name=? WHERE id=?")) {
-            $update_stmt->bind_param('sss', $username, $name, $_POST['id']);
+        if ($update_stmt = $db->prepare("UPDATE locations SET locations=? WHERE id=?")) {
+            $update_stmt->bind_param('ss', $product, $_POST['id']);
             
             // Execute the prepared query.
             if (! $update_stmt->execute()) {
@@ -27,19 +26,15 @@ if(isset($_POST['code'], $_POST['name'])){
                 echo json_encode(
                     array(
                         "status"=> "success", 
-                        "message"=> "Updated Successfully"
+                        "message"=> "Updated Successfully!!" 
                     )
                 );
             }
         }
     }
     else{
-        $random_salt = hash('sha512', uniqid(openssl_random_pseudo_bytes(16), TRUE));
-        $password = '123456';
-        $password = hash('sha512', $password . $random_salt);
-
-        if ($insert_stmt = $db->prepare("INSERT INTO users (username, name, password, salt) VALUES (?, ?, ?, ?)")) {
-            $insert_stmt->bind_param('ssss', $username, $name, $password, $random_salt);
+        if ($insert_stmt = $db->prepare("INSERT INTO locations (locations) VALUES (?)")) {
+            $insert_stmt->bind_param('s', $product);
             
             // Execute the prepared query.
             if (! $insert_stmt->execute()) {

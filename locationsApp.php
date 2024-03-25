@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="x-ua-compatible" content="ie=edge">
 
-  <title>SyncWeight </title>
+  <title>Livestock</title>
 
   <link rel="icon" href="assets/logoSmall.png" type="image">
   <!-- Font Awesome Icons -->
@@ -256,57 +256,56 @@
 </div-->
 
 <div class="wrapper">
-  <div class="content-wrapper" id="mainContents">
-  <div class="content-header">
-    <div class="container-fluid">
-        <div class="row mb-2">
-			<div class="col-sm-6">
-				<h1 class="m-0 text-dark">Parts</h1>
-			</div><!-- /.col -->
-        </div><!-- /.row -->
-    </div><!-- /.container-fluid -->
-</div>
-<!-- /.content-header -->
+    <div class="content-wrapper" id="mainContents">
 
-<!-- Main content -->
-<section class="content">
-	<div class="container-fluid">
-        <div class="row">
-			<div class="col-12">
-				<div class="card">
-					<div class="card-header">
-              <div class="row">
-                  <div class="col-9"></div>
-                  <div class="col-3">
-                      <button type="button" class="btn btn-block bg-gradient-warning btn-sm" id="addProducts">Add Parts</button>
-                  </div>
-              </div>
-          </div>
-					<div class="card-body">
-						<table id="productTable" class="table table-bordered table-striped">
-							<thead>
-								<tr>
-                  <th>Part Number</th>
-                  <th>Part Description</th>
-									<th>Actions</th>
-								</tr>
-							</thead>
-						</table>
-					</div><!-- /.card-body -->
-				</div><!-- /.card -->
-			</div><!-- /.col -->
-		</div><!-- /.row -->
-	</div><!-- /.container-fluid -->
-</section><!-- /.content -->
-  </div>
+        <div class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <h1 class="m-0 text-dark">Locations</h1>
+                    </div><!-- /.col -->
+                </div><!-- /.row -->
+            </div><!-- /.container-fluid -->
+        </div>
+        
+        <section class="content">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header">
+                    <div class="row">
+                        <div class="col-9"></div>
+                        <div class="col-3">
+                            <button type="button" class="btn btn-block bg-gradient-warning btn-sm" id="addCustomers">Add Location</button>
+                        </div>
+                    </div>
+                </div>
+                            <div class="card-body">
+                                <table id="customerTable" class="table table-bordered table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>No.</th>
+                                            <th>Locations</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                </table>
+                            </div><!-- /.card-body -->
+                        </div><!-- /.card -->
+                    </div><!-- /.col -->
+                </div><!-- /.row -->
+            </div><!-- /.container-fluid -->
+        </section>
+    </div>
 </div>
 
 <div class="modal fade" id="addModal">
     <div class="modal-dialog modal-xl">
       <div class="modal-content">
-        <form role="form" id="productForm">
+        <form role="form" id="customerForm">
             <div class="modal-header">
-              <h4 class="modal-title">Add Parts</h4>
+              <h4 class="modal-title">Add Location</h4>
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
               </button>
@@ -317,12 +316,8 @@
                   <input type="hidden" class="form-control" id="id" name="id">
                 </div>
                 <div class="form-group">
-                  <label for="product">Part No *</label>
-                  <input type="text" class="form-control" name="product" id="product" placeholder="Enter Product Name" required>
-                </div>
-                <div class="form-group"> 
-                  <label for="remark">Part Description </label>
-                  <textarea class="form-control" id="remark" name="remark" placeholder="Enter your remark"></textarea>
+                  <label for="code">Locations *</label>
+                  <input type="text" class="form-control" name="code" id="code" placeholder="Enter Locations" required>
                 </div>
               </div>
             </div>
@@ -361,7 +356,7 @@
 <script src="plugins/daterangepicker/daterangepicker.js"></script>
 <script>
 $(function () {
-  toastr.options = {
+    toastr.options = {
         "closeButton": false,
         "debug": false,
         "newestOnTop": false,
@@ -379,18 +374,19 @@ $(function () {
         "hideMethod": "fadeOut"
     }
 
-    $("#productTable").DataTable({
+    $("#customerTable").DataTable({
         "responsive": true,
         "autoWidth": false,
         'processing': true,
         'serverSide': true,
         'serverMethod': 'post',
+        'order': [[ 1, 'asc' ]],
         'ajax': {
-            'url':'php/loadProducts.php'
+            'url':'php/loadLocations.php'
         },
         'columns': [
-            { data: 'product_name' },
-            { data: 'remark' },
+            { data: 'no' },
+            { data: 'locations' },
             { 
                 data: 'id',
                 render: function ( data, type, row ) {
@@ -407,14 +403,14 @@ $(function () {
     $.validator.setDefaults({
         submitHandler: function () {
             //$('#spinnerLoading').show();
-            $.post('php/products.php', $('#productForm').serialize(), function(data){
+            $.post('php/locations.php', $('#customerForm').serialize(), function(data){
                 var obj = JSON.parse(data); 
                 
                 if(obj.status === 'success'){
-                  $('#addModal').modal('hide');
-                  toastr["success"](obj.message, "Success:");
-                  $('#productTable').DataTable().ajax.reload();
-                  //$('#spinnerLoading').hide();
+                    $('#addModal').modal('hide');
+                    toastr["success"](obj.message, "Success:");
+                    $('#customerTable').DataTable().ajax.reload();
+                    //$('#spinnerLoading').hide();
                 }
                 else if(obj.status === 'failed'){
                     toastr["error"](obj.message, "Failed:");
@@ -430,13 +426,12 @@ $(function () {
 
     //$('#spinnerLoading').hide();
 
-    $('#addProducts').on('click', function(){
+    $('#addCustomers').on('click', function(){
         $('#addModal').find('#id').val("");
-        $('#addModal').find('#product').val("");
-        $('#addModal').find('#remark').val("");
+        $('#addModal').find('#code').val("");
         $('#addModal').modal('show');
         
-        $('#productForm').validate({
+        $('#customerForm').validate({
             errorElement: 'span',
             errorPlacement: function (error, element) {
                 error.addClass('invalid-feedback');
@@ -454,16 +449,15 @@ $(function () {
 
 function edit(id){
     //$('#spinnerLoading').show();
-    $.post('php/getProduct.php', {userID: id}, function(data){
+    $.post('php/getLocation.php', {userID: id}, function(data){
         var obj = JSON.parse(data);
         
         if(obj.status === 'success'){
             $('#addModal').find('#id').val(obj.message.id);
-            $('#addModal').find('#product').val(obj.message.product_name);
-            $('#addModal').find('#remark').val(obj.message.remark);
+            $('#addModal').find('#code').val(obj.message.locations);
             $('#addModal').modal('show');
             
-            $('#productForm').validate({
+            $('#customerForm').validate({
                 errorElement: 'span',
                 errorPlacement: function (error, element) {
                     error.addClass('invalid-feedback');
@@ -490,13 +484,36 @@ function edit(id){
 function deactivate(id){
   if (confirm('Are you sure you want to delete this items?')) {
     //$('#spinnerLoading').show();
-    $.post('php/deleteProduct.php', {userID: id}, function(data){
+    $.post('php/deleteLocation.php', {userID: id}, function(data){
         var obj = JSON.parse(data);
         
         if(obj.status === 'success'){
-          toastr["success"](obj.message, "Success:");
-          $('#productTable').DataTable().ajax.reload();
-          //$('#spinnerLoading').hide();
+            toastr["success"](obj.message, "Success:");
+            $('#customerTable').DataTable().ajax.reload();
+            //$('#spinnerLoading').hide();
+        }
+        else if(obj.status === 'failed'){
+            toastr["error"](obj.message, "Failed:");
+            //$('#spinnerLoading').hide();
+        }
+        else{
+            toastr["error"]("Something wrong when activate", "Failed:");
+            //$('#spinnerLoading').hide();
+        }
+    });
+  }
+}
+
+function reactivate(id){
+  if (confirm('Are you sure you want to reactivate this items?')) {
+    //$('#spinnerLoading').show();
+    $.post('php/reactivateCustomer.php', {userID: id}, function(data){
+        var obj = JSON.parse(data);
+        
+        if(obj.status === 'success'){
+            toastr["success"](obj.message, "Success:");
+            $('#customerTable').DataTable().ajax.reload();
+            //$('#spinnerLoading').hide();
         }
         else if(obj.status === 'failed'){
             toastr["error"](obj.message, "Failed:");

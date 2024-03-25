@@ -261,7 +261,7 @@
     <div class="container-fluid">
         <div class="row mb-2">
 			<div class="col-sm-6">
-				<h1 class="m-0 text-dark">Suppliers</h1>
+				<h1 class="m-0 text-dark">Users</h1>
 			</div><!-- /.col -->
         </div><!-- /.row -->
     </div><!-- /.container-fluid -->
@@ -278,7 +278,7 @@
               <div class="row">
                   <div class="col-9"></div>
                   <div class="col-3">
-                      <button type="button" class="btn btn-block bg-gradient-warning btn-sm" id="addSuppliers">Add Suppliers</button>
+                      <button type="button" class="btn btn-block bg-gradient-warning btn-sm" id="addSuppliers">Add Users</button>
                   </div>
               </div>
           </div>
@@ -286,12 +286,9 @@
 						<table id="supplierTable" class="table table-bordered table-striped">
 							<thead>
 								<tr>
-                  <th>Code</th>
-                  <th>Reg No.</th>
-									<th>Name</th>
-									<th>Address</th>
-									<th>Phone</th>
-									<th>PIC</th>
+                                    <th>No.</th>
+                                    <th>Emp No.</th>
+                                    <th>Emp Name</th>
 									<th>Actions</th>
 								</tr>
 							</thead>
@@ -310,7 +307,7 @@
       <div class="modal-content">
         <form role="form" id="supplierForm">
             <div class="modal-header">
-              <h4 class="modal-title">Add Suppliers</h4>
+              <h4 class="modal-title">Add User</h4>
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
               </button>
@@ -321,40 +318,12 @@
                   <input type="hidden" class="form-control" id="id" name="id">
                 </div>
                 <div class="form-group">
-                  <label for="name">Supplier Code *</label>
-                  <input type="text" class="form-control" name="code" id="code" placeholder="Enter Supplier Code" required>
+                  <label for="name">Emp No *</label>
+                  <input type="text" class="form-control" name="code" id="code" placeholder="Enter Emp. No." required>
                 </div>
                 <div class="form-group">
-                  <label for="name">Reg No. </label>
-                  <input type="text" class="form-control" name="reg_no" id="reg_no" placeholder="Enter Registration No">
-                </div>
-                <div class="form-group">
-                  <label for="name">Supplier Name *</label>
-                  <input type="text" class="form-control" name="name" id="name" placeholder="Enter Supplier Name" required>
-                </div>
-                <div class="form-group"> 
-                  <label for="address">Address </label>
-                  <input type="text" class="form-control" name="address" id="address" placeholder="Enter  Address" >
-                </div>
-                <div class="form-group"> 
-                  <label for="address">Address 2</label>
-                  <input type="text" class="form-control" name="address2" id="address2" placeholder="Enter  Address">
-                </div>
-                <div class="form-group"> 
-                  <label for="address">Address 3</label>
-                  <input type="text" class="form-control" name="address3" id="address3" placeholder="Enter  Address">
-                </div>
-                <div class="form-group"> 
-                  <label for="address">Address 4</label>
-                  <input type="text" class="form-control" name="address4" id="address4" placeholder="Enter  Address">
-                </div>
-                <div class="form-group">
-                  <label for="phone">Phone </label>
-                  <input type="text" class="form-control" name="phone" id="phone" placeholder="Enter Phone" >
-                </div>
-                <div class="form-group"> 
-                  <label for="email">PIC </label>
-                  <input type="text" class="form-control" id="email" name="email" placeholder="Enter your pic" >
+                  <label for="name">Emp Name *</label>
+                  <input type="text" class="form-control" name="name" id="name" placeholder="Enter Name" required>
                 </div>
               </div>
             </div>
@@ -417,16 +386,14 @@ $(function () {
         'processing': true,
         'serverSide': true,
         'serverMethod': 'post',
+        'order': [[ 1, 'asc' ]],
         'ajax': {
-            'url':'php/loadSupplier.php'
+            'url':'php/loadUsers.php'
         },
         'columns': [
-            { data: 'supplier_code' },
-            { data: 'reg_no' },
-            { data: 'supplier_name' },
-            { data: 'supplier_address' },
-            { data: 'supplier_phone' },
-            { data: 'pic' },
+            { data: 'no' },
+            { data: 'username' },
+            { data: 'name' },
             { 
                 data: 'id',
                 render: function ( data, type, row ) {
@@ -443,7 +410,7 @@ $(function () {
     $.validator.setDefaults({
         submitHandler: function () {
             //$('#spinnerLoading').show();
-            $.post('php/suppliers.php', $('#supplierForm').serialize(), function(data){
+            $.post('php/users.php', $('#supplierForm').serialize(), function(data){
                 var obj = JSON.parse(data); 
                 
                 if(obj.status === 'success'){
@@ -469,14 +436,7 @@ $(function () {
     $('#addSuppliers').on('click', function(){
         $('#addModal').find('#id').val("");
         $('#addModal').find('#code').val("");
-        $('#addModal').find('#reg_no').val("");
         $('#addModal').find('#name').val("");
-        $('#addModal').find('#address').val("");
-        $('#addModal').find('#address2').val("");
-        $('#addModal').find('#address3').val("");
-        $('#addModal').find('#address4').val("");
-        $('#addModal').find('#phone').val("");
-        $('#addModal').find('#email').val("");
         $('#addModal').modal('show');
         
         $('#supplierForm').validate({
@@ -497,20 +457,13 @@ $(function () {
 
 function edit(id){
     //$('#spinnerLoading').show();
-    $.post('php/getSupplier.php', {userID: id}, function(data){
+    $.post('php/getUsers.php', {userID: id}, function(data){
         var obj = JSON.parse(data);
         
         if(obj.status === 'success'){
             $('#addModal').find('#id').val(obj.message.id);
-            $('#addModal').find('#code').val(obj.message.supplier_code);
-            $('#addModal').find('#reg_no').val(obj.message.reg_no);
-            $('#addModal').find('#name').val(obj.message.supplier_name);
-            $('#addModal').find('#address').val(obj.message.supplier_address);
-            $('#addModal').find('#address2').val(obj.message.supplier_address2);
-            $('#addModal').find('#address3').val(obj.message.supplier_address3);
-            $('#addModal').find('#address4').val(obj.message.supplier_address4);
-            $('#addModal').find('#phone').val(obj.message.supplier_phone);
-            $('#addModal').find('#email').val(obj.message.pic);
+            $('#addModal').find('#code').val(obj.message.username);
+            $('#addModal').find('#name').val(obj.message.name);
             $('#addModal').modal('show');
             
             $('#supplierForm').validate({
@@ -540,7 +493,7 @@ function edit(id){
 function deactivate(id){
     if (confirm('Are you sure you want to delete this items?')) {
         //$('#spinnerLoading').show();
-        $.post('php/deleteSupplier.php', {userID: id}, function(data){
+        $.post('php/deleteUser.php', {userID: id}, function(data){
             var obj = JSON.parse(data);
             
             if(obj.status === 'success'){
